@@ -1,12 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/hero_slide.dart';
+import '../models/genre.dart';
 import '../models/movie.dart';
 import '../services/web_content_repository.dart';
 
 const fallbackHeroSlide = HeroSlide(
   id: 'fallback-1',
-  title: 'theFlashx Originals',
+  title: 'Camcine Originals',
   meta: 'Trending now',
   description: 'Premium content, now streaming.',
   image: '',
@@ -80,4 +81,18 @@ final searchResultsProvider = FutureProvider<List<Movie>>((ref) async {
 
 final allContentProvider = FutureProvider<List<Movie>>((ref) async {
   return (await WebContentRepository.load()).allMovies;
+});
+
+final genresProvider = FutureProvider<List<Genre>>((ref) async {
+  final web = await WebContentRepository.load();
+  return web.genres;
+});
+
+final contentByIdProvider =
+    FutureProvider.family<Movie?, String>((ref, id) async {
+  final all = await ref.watch(allContentProvider.future);
+  for (final m in all) {
+    if (m.id == id) return m;
+  }
+  return null;
 });

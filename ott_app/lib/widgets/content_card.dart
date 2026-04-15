@@ -150,15 +150,16 @@ class _ContentCardState extends State<ContentCard>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: 3),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.60),
+                        color: AppColors.backgroundSecondary.withOpacity(0.75),
                         borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: AppColors.borderSubtle),
                       ),
                       child: Text(
                         widget.content.genre.first,
                         style: TextStyle(
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white.withOpacity(0.85),
+                          color: AppColors.textPrimary.withOpacity(0.92),
                         ),
                       ),
                     ),
@@ -172,12 +173,12 @@ class _ContentCardState extends State<ContentCard>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: 3),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.55),
+                        color: AppColors.backgroundSecondary.withOpacity(0.70),
                         borderRadius: BorderRadius.circular(999),
-                        border: Border.all(color: AppColors.borderSubtle),
+                        border: Border.all(color: AppColors.border),
                       ),
                       child: Text(
-                        '${(widget.content.rating! * 10).toStringAsFixed(1)}',
+                        (widget.content.rating! * 10).toStringAsFixed(1),
                         style: const TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
@@ -197,9 +198,9 @@ class _ContentCardState extends State<ContentCard>
                         child: ClipRRect(
                           borderRadius: borderRadius,
                           child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
                             child: Container(
-                              color: Colors.black.withOpacity(0.72),
+                              color: AppColors.background.withOpacity(0.82),
                               padding: const EdgeInsets.all(10),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

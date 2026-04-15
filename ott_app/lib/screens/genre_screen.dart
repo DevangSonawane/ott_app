@@ -11,7 +11,6 @@ import '../providers/app_content_provider.dart';
 import '../theme/app_colors.dart';
 import '../utils/extensions.dart';
 import '../widgets/content_row.dart';
-import '../widgets/footer.dart';
 import '../widgets/hero_slider.dart';
 import '../widgets/movie_detail_modal.dart';
 
@@ -114,11 +113,9 @@ class _GenreScreenState extends ConsumerState<GenreScreen> {
             error: (_, __) => _emptyState(context),
           ),
         ),
-        const SliverToBoxAdapter(child: Footer()),
-        const SliverToBoxAdapter(child: SizedBox(height: 24)),
         SliverPadding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 80),
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom + 80),
           sliver: const SliverToBoxAdapter(child: SizedBox.shrink()),
         ),
       ],

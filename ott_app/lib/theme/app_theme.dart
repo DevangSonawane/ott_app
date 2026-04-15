@@ -36,12 +36,12 @@ class AppTheme {
   }
 
   static TextTheme _textTheme() {
-    TextStyle interTight(double size, FontWeight weight) =>
-        GoogleFonts.interTight(
+    TextStyle soraTight(double size, FontWeight weight) => GoogleFonts.sora(
           fontSize: size,
           fontWeight: weight,
           color: AppColors.textPrimary,
-          height: 1.1,
+          height: 1.08,
+          letterSpacing: -0.2,
         );
 
     TextStyle inter(double size, FontWeight weight) => GoogleFonts.inter(
@@ -52,13 +52,13 @@ class AppTheme {
         );
 
     return TextTheme(
-      displayLarge: interTight(56, FontWeight.w800),
-      displayMedium: interTight(40, FontWeight.w800),
-      displaySmall: interTight(32, FontWeight.w600),
-      headlineLarge: interTight(24, FontWeight.w800),
-      headlineMedium: interTight(20, FontWeight.w800),
-      titleLarge: inter(18, FontWeight.w600),
-      titleMedium: inter(16, FontWeight.w600),
+      displayLarge: soraTight(56, FontWeight.w800),
+      displayMedium: soraTight(40, FontWeight.w800),
+      displaySmall: soraTight(32, FontWeight.w700),
+      headlineLarge: soraTight(24, FontWeight.w800),
+      headlineMedium: soraTight(20, FontWeight.w800),
+      titleLarge: soraTight(18, FontWeight.w700),
+      titleMedium: soraTight(16, FontWeight.w700),
       bodyLarge: inter(16, FontWeight.w400).copyWith(
         color: AppColors.textSecondary,
       ),

@@ -204,15 +204,21 @@ class _ContentRowState extends State<ContentRow> {
         duration: 200.ms,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: active ? Colors.white : Colors.white.withOpacity(0.06),
+          color: active
+              ? AppColors.accent.withOpacity(0.18)
+              : Colors.white.withOpacity(0.05),
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: AppColors.borderSubtle),
+          border: Border.all(
+            color:
+                active ? AppColors.accent.withOpacity(0.40) : AppColors.border,
+          ),
         ),
         child: Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: active ? Colors.black : AppColors.textMuted,
-                fontWeight: FontWeight.w700,
+                color: active ? AppColors.textPrimary : AppColors.textSecondary,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.6,
               ),
         ),
       ),

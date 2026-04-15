@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../models/genre.dart';
@@ -135,13 +134,14 @@ class WebContentRepository {
       episodeInfo: j['episodeInfo'] == null
           ? null
           : EpisodeInfo(
-              season: ((j['episodeInfo'] as Map<String, dynamic>)['season'] as num)
-                  .toInt(),
+              season:
+                  ((j['episodeInfo'] as Map<String, dynamic>)['season'] as num)
+                      .toInt(),
               episode:
                   ((j['episodeInfo'] as Map<String, dynamic>)['episode'] as num)
                       .toInt(),
-              episodeTitle: ((j['episodeInfo'] as Map<String, dynamic>)['episodeTitle']
-                      as String?) ??
+              episodeTitle: ((j['episodeInfo']
+                      as Map<String, dynamic>)['episodeTitle'] as String?) ??
                   '',
             ),
     );

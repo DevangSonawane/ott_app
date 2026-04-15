@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../models/movie.dart';
 import '../providers/content_provider.dart';
 import '../providers/app_content_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/content_grid.dart';
-import '../widgets/movie_detail_modal.dart';
 
 class MoviesScreen extends ConsumerWidget {
   const MoviesScreen({super.key});
 
   void _open(BuildContext context, WidgetRef ref, Movie movie) {
     ref.read(contentProvider.notifier).selectMovie(movie);
-    showMovieDetailModal(context, movie);
+    context.push('/content/${movie.id}');
   }
 
   @override
@@ -34,7 +34,7 @@ class MoviesScreen extends ConsumerWidget {
             loading: () => const ContentGrid(
               title: 'Movies',
               subtitle: 'Trending now',
-              contents: const <Movie>[],
+              contents: <Movie>[],
               onSelect: _noopMovieSelect,
               loadingSkeleton: true,
             ),

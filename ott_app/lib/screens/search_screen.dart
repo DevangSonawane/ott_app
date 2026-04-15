@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 
 import '../models/movie.dart';
 import '../providers/content_provider.dart';
 import '../providers/app_content_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/content_card.dart';
-import '../widgets/movie_detail_modal.dart';
 import '../widgets/shimmer_placeholder.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
-  const SearchScreen({super.key});
+  const SearchScreen({super.key, this.scope = 'all'});
+
+  /// Search scope: all|movie|series|songs|news
+  final String scope;
 
   @override
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
@@ -28,7 +31,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   void _open(Movie m) {
     ref.read(contentProvider.notifier).selectMovie(m);
-    showMovieDetailModal(context, m);
+    context.push('/content/${m.id}');
   }
 
   @override
@@ -36,13 +39,21 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final asyncResults = ref.watch(searchResultsProvider);
     final topPadding = MediaQuery.of(context).padding.top + 70 + 16;
     final bottomPadding = MediaQuery.of(context).padding.bottom + 80;
+    final scope = widget.scope;
+    final scopeLabel = switch (scope) {
+      'movie' => 'Movies',
+      'series' => 'Series',
+      'songs' => 'Songs',
+      'news' => 'News',
+      _ => 'All',
+    };
     return Padding(
       padding: EdgeInsets.fromLTRB(16, topPadding, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Search',
+            'Search $scopeLabel',
             style: Theme.of(context).textTheme.displaySmall?.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w900,
@@ -56,7 +67,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 .bodyMedium
                 ?.copyWith(color: AppColors.textPrimary),
             decoration: InputDecoration(
-              hintText: 'Search titles, people, genres...',
+              hintText: scope == 'all'
+                  ? 'Search titles, people, genres...'
+                  : 'Search $scopeLabel...',
               hintStyle: Theme.of(context)
                   .textTheme
                   .bodySmall
@@ -75,9 +88,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: AppColors.accent, width: 1.2),
+                borderSide:
+                    const BorderSide(color: AppColors.accent, width: 1.2),
               ),
-              ),
+            ),
             onChanged: (v) => ref.read(searchQueryProvider.notifier).state = v,
           ),
           const Gap(12),
@@ -96,7 +110,24 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
                 return asyncResults.when(
                   data: (results) {
-                    if (results.isEmpty) {
+                    final filtered = (scope == 'movie' || scope == 'series')
+                        ? results
+                            .where((m) => m.type == scope)
+                            .toList(growable: false)
+                        : results;
+                    if (scope == 'songs' || scope == 'news') {
+                      return Center(
+                        child: Text(
+                          'Search for $scopeLabel is coming soon.',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: AppColors.textMuted),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }
+                    if (filtered.isEmpty) {
                       return Center(
                         child: Text(
                           'No results found.',
@@ -111,10 +142,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       physics: const BouncingScrollPhysics(),
                       padding: EdgeInsets.only(bottom: bottomPadding),
                       gridDelegate: gridDelegate,
-                      itemCount: results.length,
+                      itemCount: filtered.length,
                       itemBuilder: (context, index) {
                         return ContentCard(
-                          content: results[index],
+                          content: filtered[index],
                           variant: ContentCardVariant.defaultPoster,
                           onSelect: _open,
                         );

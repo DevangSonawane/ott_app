@@ -12,7 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ott_app/theme/app_theme.dart';
 
 void main() {
-  testWidgets('theFlashx theme builds', (WidgetTester tester) async {
+  testWidgets('Camcine theme builds', (WidgetTester tester) async {
     GoogleFonts.config.allowRuntimeFetching = false;
     await tester.pumpWidget(
       MaterialApp(

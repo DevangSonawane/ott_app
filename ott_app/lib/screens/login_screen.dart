@@ -44,7 +44,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final notifier = ref.read(authProvider.notifier);
     final isTablet =
         MediaQuery.of(context).size.width >= AppBreakpoints.tabletMin;
-    final isCompact = MediaQuery.of(context).size.width < 380;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -101,8 +100,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                             Expanded(
                                                 child: _qrSection(context)),
                                             const SizedBox(width: 18),
-                                            _orDivider(context,
-                                                vertical: true),
+                                            _orDivider(context, vertical: true),
                                             const SizedBox(width: 18),
                                             Expanded(
                                                 child: _formSection(
@@ -134,7 +132,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               color: Colors.black.withOpacity(0.28),
                               shape: const CircleBorder(),
                               child: IconButton(
-                                onPressed: () => context.pop(),
+                                onPressed: () {
+                                  final router = GoRouter.of(context);
+                                  if (router.canPop()) {
+                                    router.pop();
+                                  } else {
+                                    context.go('/');
+                                  }
+                                },
                                 icon: const Icon(Icons.close_rounded,
                                     color: AppColors.textPrimary),
                                 iconSize: 20,
@@ -185,7 +190,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
         const Gap(6),
         Text(
-          'Click on the link generated to redirect to theFlashx mobile app',
+          'Click on the link generated to redirect to Camcine mobile app',
           textAlign: TextAlign.center,
           style: Theme.of(context)
               .textTheme

@@ -277,8 +277,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       ),
                     ),
                     onChanged: (v) {
-                      if (v.isNotEmpty && i < 5)
+                      if (v.isNotEmpty && i < 5) {
                         FocusScope.of(context).nextFocus();
+                      }
                     },
                   ),
                 ),

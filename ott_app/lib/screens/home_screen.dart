@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../models/movie.dart';
 import '../providers/content_provider.dart';
 import '../providers/app_content_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/content_row.dart';
-import '../widgets/footer.dart';
-import '../widgets/hero_slider.dart';
-import '../widgets/movie_detail_modal.dart';
+import '../widgets/home_header.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   void _open(BuildContext context, WidgetRef ref, Movie movie) {
     ref.read(contentProvider.notifier).selectMovie(movie);
-    showMovieDetailModal(context, movie);
+    context.push('/content/${movie.id}');
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final size = MediaQuery.of(context).size;
-    final heroHeight = (size.height * 0.70).clamp(420.0, 680.0);
-
     final continueRow = ref.watch(continueWatchingProvider).when(
           data: (items) => ContentRow(
             title: 'Continue Watching',
@@ -62,10 +58,7 @@ class HomeScreen extends ConsumerWidget {
             parent: AlwaysScrollableScrollPhysics()),
         slivers: [
           SliverToBoxAdapter(
-            child: SizedBox(
-              height: heroHeight,
-              child: HeroSlider(height: heroHeight),
-            ),
+            child: const HomeHeader(),
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -247,8 +240,6 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
           ),
-          const SliverToBoxAdapter(child: Footer()),
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
           SliverPadding(
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).padding.bottom + 80,

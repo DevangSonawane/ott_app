@@ -33,7 +33,7 @@ class _HeroSliderState extends ConsumerState<HeroSlider> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(8.seconds, (_) {
+    _timer = Timer.periodic(6.seconds, (_) {
       if (!mounted) return;
       if (!_controller.hasClients) return;
       final slides =
@@ -87,8 +87,8 @@ class _HeroSliderState extends ConsumerState<HeroSlider> {
                     slide: slide,
                     dragOffset: _dragOffset,
                     onPointerMoveDelta: (dx) {
-                      setState(() => _dragOffset =
-                          (_dragOffset + dx).clamp(-30, 30));
+                      setState(() =>
+                          _dragOffset = (_dragOffset + dx).clamp(-30, 30));
                     },
                     onPointerEnd: () => setState(() => _dragOffset = 0),
                   );
@@ -219,33 +219,53 @@ class _HeroSlideContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.displaySmall?.copyWith(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w900,
+          fontStyle: FontStyle.italic,
+          height: 0.95,
+          letterSpacing: -0.6,
+        );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          'theFlashx',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
                 color: AppColors.accent,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.8,
+                borderRadius: BorderRadius.circular(8),
               ),
+              child: Text(
+                'PREMIUM',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.2,
+                    ),
+              ),
+            ),
+            const Gap(10),
+            Text(
+              slide.meta.toUpperCase(),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.white.withOpacity(0.50),
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.0,
+                  ),
+            ),
+          ],
         ),
-        const Gap(10),
-        Text(
-          slide.meta,
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall
-              ?.copyWith(color: AppColors.textMuted),
-        ),
-        const Gap(10),
-        Text(slide.title)
+        const Gap(12),
+        Text(slide.title.toUpperCase(), style: titleStyle)
             .animate()
             .slideY(
                 begin: 0.3, end: 0, duration: 800.ms, curve: Curves.easeOutExpo)
             .fadeIn(duration: 800.ms),
-        const Gap(10),
+        const Gap(12),
         Text(
           slide.description,
           maxLines: 3,
@@ -253,9 +273,9 @@ class _HeroSlideContent extends StatelessWidget {
           style: Theme.of(context)
               .textTheme
               .bodyLarge
-              ?.copyWith(color: AppColors.textSecondary),
+              ?.copyWith(color: Colors.white.withOpacity(0.58)),
         ).animate(delay: 300.ms).fadeIn(duration: 600.ms),
-        const Gap(16),
+        const Gap(18),
         LayoutBuilder(
           builder: (context, constraints) {
             final compact = constraints.maxWidth < 360;
@@ -265,24 +285,24 @@ class _HeroSlideContent extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _ctaWhite(
+                  _ctaPrimary(
                     context,
-                    label: 'Watch Now',
+                    label: 'PLAY NOW',
                     icon: Icons.play_arrow_rounded,
                     onTap: () {},
                   ),
                   const SizedBox(width: 8),
                   _ctaGhost(
                     context,
-                    label: 'Add to List',
+                    label: 'MORE INFO',
                     icon: Icons.add_rounded,
                     onTap: () {},
                   ),
                   const SizedBox(width: 8),
                   _ctaGhost(
                     context,
-                    label: 'More Info',
-                    icon: Icons.info_outline_rounded,
+                    label: 'ADD',
+                    icon: Icons.add_rounded,
                     onTap: () {},
                     iconOnly: compact,
                   ),
@@ -298,7 +318,7 @@ class _HeroSlideContent extends StatelessWidget {
     );
   }
 
-  Widget _ctaWhite(
+  Widget _ctaPrimary(
     BuildContext context, {
     required String label,
     required IconData icon,
@@ -306,24 +326,32 @@ class _HeroSlideContent extends StatelessWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(999),
       child: Container(
         height: 40,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.accent,
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.accent.withOpacity(0.30),
+              blurRadius: 26,
+              offset: const Offset(0, 12),
+            ),
+          ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Colors.black, size: 20),
+            Icon(icon, color: Colors.white, size: 20),
             const SizedBox(width: 6),
             Text(
               label,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.0,
                   ),
             ),
           ],
@@ -341,14 +369,14 @@ class _HeroSlideContent extends StatelessWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(999),
       child: Container(
         height: 40,
         padding: EdgeInsets.symmetric(horizontal: iconOnly ? 10 : 12),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.borderSubtle),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: AppColors.border),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -360,7 +388,8 @@ class _HeroSlideContent extends StatelessWidget {
                 label,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.0,
                     ),
               ),
             ],

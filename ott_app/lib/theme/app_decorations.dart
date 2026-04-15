@@ -10,9 +10,9 @@ class AppDecorations {
   );
 
   static final glassDecoration = BoxDecoration(
-    color: Colors.white.withOpacity(0.06),
+    color: AppColors.glassBg,
     borderRadius: BorderRadius.circular(16),
-    border: Border.all(color: AppColors.borderSubtle),
+    border: Border.all(color: AppColors.glassBorder),
   );
 
   static const gradientButtonDecoration = BoxDecoration(

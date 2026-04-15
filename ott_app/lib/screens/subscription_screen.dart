@@ -80,9 +80,9 @@ class SubscriptionScreen extends ConsumerWidget {
                         context,
                         selected: state.selectedTier == 'super',
                         name: 'Super',
-                        price:
-                            planFor(tier: 'super', billingCycle: state.billingCycle)
-                                .price,
+                        price: planFor(
+                                tier: 'super', billingCycle: state.billingCycle)
+                            .price,
                         period: _periodLabel(state.billingCycle),
                         badgeColor: AppColors.gold,
                         onTap: () async {
@@ -142,7 +142,7 @@ class SubscriptionScreen extends ConsumerWidget {
                   color: AppColors.textPrimary, size: 16),
               const SizedBox(width: 8),
               Text(
-                'theFlashx Premium',
+                'Camcine Premium',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w800,

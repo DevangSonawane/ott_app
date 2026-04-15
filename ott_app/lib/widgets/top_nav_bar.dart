@@ -7,7 +7,6 @@ import '../providers/ui_provider.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_decorations.dart';
 import '../widgets/glass_container.dart';
-import 'search_overlay.dart';
 
 class TopNavBar extends ConsumerStatefulWidget implements PreferredSizeWidget {
   const TopNavBar({super.key});
@@ -164,12 +163,10 @@ class _TopNavBarState extends ConsumerState<TopNavBar> {
             Expanded(
               child: Text(
                 title,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: AppColors.textPrimary,
-                      fontWeight: emphasized ? FontWeight.w800 : FontWeight.w600,
+                      fontWeight:
+                          emphasized ? FontWeight.w800 : FontWeight.w600,
                     ),
               ),
             ),
@@ -181,32 +178,25 @@ class _TopNavBarState extends ConsumerState<TopNavBar> {
     );
   }
 
-  void _openSearch() {
+  void _openSearchPage() {
     _closeMenu();
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'Search',
-      barrierColor: Colors.black.withOpacity(0.45),
-      transitionDuration: 260.ms,
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return const Align(
-            alignment: Alignment.topCenter, child: SearchOverlay());
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        final curved =
-            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
-        return FadeTransition(
-          opacity: curved,
-          child: SlideTransition(
-            position:
-                Tween<Offset>(begin: const Offset(0, -0.1), end: Offset.zero)
-                    .animate(curved),
-            child: child,
-          ),
-        );
-      },
-    );
+    final loc = GoRouterState.of(context).uri.toString();
+    final uri = Uri.tryParse(loc);
+    var scope = 'all';
+    if (loc.startsWith('/browse')) {
+      final type = uri?.queryParameters['type'];
+      if (type == 'movie' || type == 'series') scope = type!;
+    } else if (loc.startsWith('/movies')) {
+      scope = 'movie';
+    } else if (loc.startsWith('/tv')) {
+      scope = 'series';
+    } else if (loc.startsWith('/songs')) {
+      scope = 'songs';
+    } else if (loc.startsWith('/live-news')) {
+      scope = 'news';
+    }
+    context
+        .go(Uri(path: '/search', queryParameters: {'scope': scope}).toString());
   }
 
   @override
@@ -235,7 +225,7 @@ class _TopNavBarState extends ConsumerState<TopNavBar> {
             blurSigma: 12,
             decoration: AppDecorations.glassDecoration.copyWith(
               color: scrolled
-                  ? Colors.white.withOpacity(0.06)
+                  ? AppColors.background.withOpacity(0.52)
                   : Colors.transparent,
               border: Border.all(
                   color:
@@ -243,40 +233,98 @@ class _TopNavBarState extends ConsumerState<TopNavBar> {
             ),
             child: SizedBox(
               height: 54,
-              child: Row(
+              child: Stack(
                 children: [
-                  const SizedBox(width: 12),
-                  InkWell(
-                    onTap: () => context.go('/'),
-                    child: RichText(
-                      text: TextSpan(
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
-                            ),
-                        children: const [
-                          TextSpan(text: 'the'),
-                          TextSpan(
-                              text: 'Flashx',
-                              style: TextStyle(color: AppColors.accent)),
-                        ],
+                  if (scrolled)
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 1,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Colors.transparent,
+                              Colors.white.withOpacity(0.10),
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
                       ),
                     ),
+                  Row(
+                    children: [
+                      const SizedBox(width: 10),
+                      InkWell(
+                        onTap: () => context.go('/'),
+                        borderRadius: BorderRadius.circular(14),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 6),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 28,
+                                height: 28,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      AppColors.accent,
+                                      AppColors.accentHover,
+                                    ],
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.accent.withOpacity(0.35),
+                                      blurRadius: 14,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.local_movies_rounded,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Camcine',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      color: AppColors.textPrimary,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      _iconButton(
+                        icon: Icons.search_rounded,
+                        onTap: _openSearchPage,
+                        rotateOnPress: true,
+                      ),
+                      const SizedBox(width: 8),
+                      _notificationBell(),
+                      const SizedBox(width: 8),
+                      CompositedTransformTarget(
+                        link: _layerLink,
+                        child: _profileAvatar(onTap: _toggleMenu),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
                   ),
-                  const Spacer(),
-                  _iconButton(
-                    icon: Icons.search_rounded,
-                    onTap: _openSearch,
-                    rotateOnPress: true,
-                  ),
-                  const SizedBox(width: 8),
-                  _notificationBell(),
-                  const SizedBox(width: 8),
-                  CompositedTransformTarget(
-                    link: _layerLink,
-                    child: _profileAvatar(onTap: _toggleMenu),
-                  ),
-                  const SizedBox(width: 10),
                 ],
               ),
             ),
