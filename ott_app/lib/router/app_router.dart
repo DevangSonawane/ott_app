@@ -30,10 +30,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final loc = state.uri.toString();
       final goingToAuth = loc.startsWith('/login') || loc.startsWith('/signup');
       final protected = loc.startsWith('/account') ||
-          loc.startsWith('/subscription') ||
-          loc.startsWith('/pricing') ||
-          loc.startsWith('/profiles') ||
-          loc.startsWith('/profile-settings');
+          loc.startsWith('/subscription');
       if (!loggedIn && protected && !goingToAuth) return '/login';
       if (loggedIn && goingToAuth) return '/';
       return null;

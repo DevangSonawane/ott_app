@@ -11,7 +11,6 @@ import '../theme/app_colors.dart';
 import '../theme/app_decorations.dart';
 import '../utils/constants.dart';
 import '../widgets/gradient_button.dart';
-import '../widgets/top_nav_bar.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -47,118 +46,73 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 78),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: isTablet ? 760 : 380),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Stack(
-                        children: [
-                          Container(
-                            decoration: AppDecorations.glassDecoration.copyWith(
-                              borderRadius: BorderRadius.circular(18),
-                              color: Colors.white.withOpacity(0.06),
-                              boxShadow: [AppDecorations.accentGlow],
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: isTablet ? 760 : 380),
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Container(
+                decoration: AppDecorations.glassDecoration.copyWith(
+                  borderRadius: BorderRadius.circular(18),
+                  color: Colors.white.withOpacity(0.06),
+                  boxShadow: [AppDecorations.accentGlow],
+                ),
+                padding: const EdgeInsets.all(14),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Login or sign up to continue',
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w900,
                             ),
-                            padding: const EdgeInsets.all(14),
-                            child: SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Login or sign up to continue',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium
-                                        ?.copyWith(
-                                          color: AppColors.textPrimary,
-                                          fontWeight: FontWeight.w900,
-                                        ),
-                                  ),
-                                  const Gap(6),
-                                  Text(
-                                    'Scan QR code or enter phone number to login',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(color: AppColors.textMuted),
-                                  ),
-                                  const Gap(12),
-                                  isTablet
-                                      ? Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                                child: _qrSection(context)),
-                                            const SizedBox(width: 18),
-                                            _orDivider(context, vertical: true),
-                                            const SizedBox(width: 18),
-                                            Expanded(
-                                                child: _formSection(
-                                                    context, auth, notifier)),
-                                          ],
-                                        )
-                                      : Column(
-                                          children: [
-                                            _qrSection(context),
-                                            const Gap(12),
-                                            _orDivider(context,
-                                                vertical: false),
-                                            const Gap(12),
-                                            _formSection(
-                                                context, auth, notifier),
-                                          ],
-                                        ),
-                                ],
-                              ),
-                            ),
-                          )
-                              .animate()
-                              .fadeIn(duration: 220.ms)
-                              .scaleXY(begin: 0.98, end: 1),
-                          Positioned(
-                            right: 8,
-                            top: 8,
-                            child: Material(
-                              color: Colors.black.withOpacity(0.28),
-                              shape: const CircleBorder(),
-                              child: IconButton(
-                                onPressed: () {
-                                  final router = GoRouter.of(context);
-                                  if (router.canPop()) {
-                                    router.pop();
-                                  } else {
-                                    context.go('/');
-                                  }
-                                },
-                                icon: const Icon(Icons.close_rounded,
-                                    color: AppColors.textPrimary),
-                                iconSize: 20,
-                                padding: const EdgeInsets.all(10),
-                                constraints: const BoxConstraints(
-                                    minWidth: 40, minHeight: 40),
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
+                      const Gap(6),
+                      Text(
+                        'Scan QR code or enter phone number to login',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(color: AppColors.textMuted),
+                      ),
+                      const Gap(12),
+                      isTablet
+                          ? Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(child: _qrSection(context)),
+                                const SizedBox(width: 18),
+                                _orDivider(context, vertical: true),
+                                const SizedBox(width: 18),
+                                Expanded(
+                                    child: _formSection(
+                                        context, auth, notifier)),
+                              ],
+                            )
+                          : Column(
+                              children: [
+                                _qrSection(context),
+                                const Gap(12),
+                                _orDivider(context, vertical: false),
+                                const Gap(12),
+                                _formSection(context, auth, notifier),
+                              ],
+                            ),
+                    ],
                   ),
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 220.ms)
+                  .scaleXY(begin: 0.98, end: 1),
             ),
           ),
-          const Positioned(top: 0, left: 0, right: 0, child: TopNavBar()),
-        ],
+        ),
       ),
     );
   }
@@ -246,15 +200,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         const Gap(14),
         _dividerText(context, 'OR SIGN IN WITH'),
         const Gap(10),
-        OutlinedButton.icon(
-          onPressed: () {},
-          style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: AppColors.borderSubtle),
-            foregroundColor: AppColors.textPrimary,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            onPressed: () {},
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: AppColors.borderSubtle),
+              foregroundColor: AppColors.textPrimary,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(Icons.g_mobiledata_rounded),
+                SizedBox(width: 10),
+                Text('Continue with Google'),
+              ],
+            ),
           ),
-          icon: const Icon(Icons.g_mobiledata_rounded),
-          label: const Text('Continue with Google'),
         ),
         const Gap(12),
         Row(

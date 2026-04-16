@@ -9,6 +9,7 @@ class GradientButton extends StatefulWidget {
     required this.label,
     required this.onTap,
     this.icon,
+    this.gradient,
     this.height = 52,
     this.borderRadius = 14,
     this.fullWidth = true,
@@ -17,6 +18,7 @@ class GradientButton extends StatefulWidget {
   final String label;
   final VoidCallback onTap;
   final IconData? icon;
+  final Gradient? gradient;
   final double height;
   final double borderRadius;
   final bool fullWidth;
@@ -31,13 +33,16 @@ class _GradientButtonState extends State<GradientButton> {
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(widget.borderRadius);
+    final decoration = widget.gradient != null
+        ? BoxDecoration(gradient: widget.gradient)
+        : AppDecorations.gradientButtonDecoration;
     final child = AnimatedScale(
       duration: const Duration(milliseconds: 120),
       curve: Curves.easeOutCubic,
       scale: _pressed ? 0.98 : 1,
       child: Container(
         height: widget.height,
-        decoration: AppDecorations.gradientButtonDecoration.copyWith(
+        decoration: decoration.copyWith(
           borderRadius: borderRadius,
           boxShadow: [AppDecorations.accentGlow],
         ),

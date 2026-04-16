@@ -97,16 +97,6 @@ class _TopNavBarState extends ConsumerState<TopNavBar> {
                               icon: Icons.manage_accounts_rounded,
                             ),
                             _menuItem(
-                              'Account Settings',
-                              () => context.go('/account'),
-                              icon: Icons.settings_rounded,
-                            ),
-                            _menuItem(
-                              'Subscription',
-                              () => context.go('/subscription'),
-                              icon: Icons.credit_card_rounded,
-                            ),
-                            _menuItem(
                               'Pricing',
                               () => context.go('/pricing'),
                               icon: Icons.local_offer_rounded,

@@ -6,11 +6,11 @@ import 'package:go_router/go_router.dart';
 
 import '../models/hero_slide.dart';
 import '../providers/app_content_provider.dart';
-import '../providers/auth_provider.dart';
 import '../providers/content_provider.dart';
 import '../theme/app_colors.dart';
 import '../utils/extensions.dart';
 import 'app_image.dart';
+import 'for_user_header.dart';
 import 'glass_container.dart';
 
 class HomeHeader extends ConsumerStatefulWidget {
@@ -106,15 +106,7 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
     return Row(
       children: [
         Expanded(
-          child: Text(
-            'For $name',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w900,
-                ),
-          ),
+          child: ForUserHeader(userName: name),
         ),
         _iconButton(
           context,
@@ -157,8 +149,6 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
         : const Offset(0, 0);
     final size = buttonBox?.size ?? const Size(44, 44);
 
-    final auth = ref.read(authProvider);
-
     showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -190,51 +180,38 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (auth.isLoggedIn) ...[
-                              _menuItem(
-                                context,
-                                icon: Icons.settings_rounded,
-                                label: 'Account Settings',
-                                onTap: () => rootContext.go('/account'),
-                              ),
-                              _menuItem(
-                                context,
-                                icon: Icons.switch_account_rounded,
-                                label: 'Switch Profile',
-                                onTap: () => rootContext.push('/profiles'),
-                              ),
-                              _menuItem(
-                                context,
-                                icon: Icons.manage_accounts_rounded,
-                                label: 'Profile Settings',
-                                onTap: () =>
-                                    rootContext.push('/profile-settings'),
-                              ),
-                              const Divider(
-                                  height: 1, color: AppColors.borderSubtle),
-                              _menuItem(
-                                context,
-                                icon: Icons.logout_rounded,
-                                label: 'Logout',
-                                onTap: () {
-                                  ref.read(authProvider.notifier).logout();
-                                  rootContext.go('/');
-                                },
-                              ),
-                            ] else ...[
-                              _menuItem(
-                                context,
-                                icon: Icons.login_rounded,
-                                label: 'Login',
-                                onTap: () => rootContext.push('/login'),
-                              ),
-                              _menuItem(
-                                context,
-                                icon: Icons.person_add_alt_1_rounded,
-                                label: 'Sign Up',
-                                onTap: () => rootContext.push('/signup'),
-                              ),
-                            ],
+                            _menuItem(
+                              context,
+                              icon: Icons.switch_account_rounded,
+                              label: 'Switch Profile',
+                              onTap: () => rootContext.push('/profiles'),
+                            ),
+                            _menuItem(
+                              context,
+                              icon: Icons.manage_accounts_rounded,
+                              label: 'Profile Settings',
+                              onTap: () => rootContext.push('/profile-settings'),
+                            ),
+                            _menuItem(
+                              context,
+                              icon: Icons.local_offer_rounded,
+                              label: 'Pricing',
+                              onTap: () => rootContext.go('/pricing'),
+                            ),
+                            const Divider(
+                                height: 1, color: AppColors.borderSubtle),
+                            _menuItem(
+                              context,
+                              icon: Icons.login_rounded,
+                              label: 'Login',
+                              onTap: () => rootContext.push('/login'),
+                            ),
+                            _menuItem(
+                              context,
+                              icon: Icons.person_add_alt_1_rounded,
+                              label: 'Sign Up',
+                              onTap: () => rootContext.push('/signup'),
+                            ),
                           ],
                         ),
                       ),

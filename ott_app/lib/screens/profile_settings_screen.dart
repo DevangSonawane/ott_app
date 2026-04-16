@@ -218,7 +218,15 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       ),
                     ),
                     const Gap(8),
-                    GradientButton(label: 'Save', onTap: () => context.pop()),
+                    GradientButton(
+                      label: 'Save',
+                      onTap: () => context.pop(),
+                      gradient: const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [AppColors.accent, AppColors.accentHover],
+                      ),
+                    ),
                   ],
                 ),
               ),

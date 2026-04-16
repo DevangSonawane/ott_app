@@ -24,8 +24,13 @@ class AppShell extends ConsumerWidget {
         final uri = GoRouterState.of(context).uri;
         final path = uri.path;
         final isHome = path == '/';
-        final isImmersive = path.startsWith('/content/') || path.startsWith('/player/');
-        final showTopNav = !isHome && !isImmersive;
+        final isImmersive =
+            path.startsWith('/content/') || path.startsWith('/player/');
+        final showTopNav =
+            !isHome &&
+            !isImmersive &&
+            !path.startsWith('/songs') &&
+            !path.startsWith('/live-news');
         return Scaffold(
           extendBody: !isTablet,
           body: NotificationListener<ScrollNotification>(

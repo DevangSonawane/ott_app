@@ -47,6 +47,8 @@ class BrowseScreen extends ConsumerWidget {
     final type = uri.queryParameters['type'] ?? initialType ?? 'all';
     final sort = uri.queryParameters['sort'] ?? 'popular';
     final selectedGenre = uri.queryParameters['genre'] ?? '';
+    final lockTypeAndSort = type == 'movie' || type == 'series';
+    final effectiveSort = lockTypeAndSort ? 'popular' : sort;
 
     final asyncGenres = ref.watch(genresProvider);
     final asyncItems = selectedGenre.isEmpty
@@ -66,8 +68,12 @@ class BrowseScreen extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     type == 'movie'
-                        ? 'Popular Movies'
-                        : (type == 'series' ? 'TV Shows' : 'Discover'),
+                        ? (lockTypeAndSort ? 'Popular Movies' : 'Movies')
+                        : (type == 'series'
+                            ? (lockTypeAndSort
+                                ? 'Popular TV Shows'
+                                : 'TV Shows')
+                            : 'Discover'),
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.w900,
@@ -75,92 +81,102 @@ class BrowseScreen extends ConsumerWidget {
                         ),
                   ),
                 ),
-                IconButton(
-                  onPressed: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      backgroundColor: Colors.transparent,
-                      barrierColor: Colors.black.withOpacity(0.45),
-                      builder: (context) => _FilterSheet(
-                        type: type,
-                        sort: sort,
-                        onSelectType: (v) => _goWith(context, uri, type: v),
-                        onSelectSort: (v) => _goWith(context, uri, sort: v),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.tune_rounded,
-                      color: AppColors.textSecondary),
-                ),
-                IconButton(
-                  onPressed: () {
-                    final scope =
-                        type == 'movie' || type == 'series' ? type : 'all';
-                    context.go('/search?scope=$scope');
-                  },
-                  icon: const Icon(Icons.search_rounded,
-                      color: AppColors.textSecondary),
-                ),
+                if (!lockTypeAndSort)
+                  IconButton(
+                    onPressed: () {
+                      showModalBottomSheet<void>(
+                        context: context,
+                        backgroundColor: Colors.transparent,
+                        barrierColor: Colors.black.withOpacity(0.45),
+                        builder: (context) => _FilterSheet(
+                          type: type,
+                          sort: effectiveSort,
+                          onSelectType: (v) => _goWith(context, uri, type: v),
+                          onSelectSort: (v) =>
+                              _goWith(context, uri, sort: v),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.tune_rounded,
+                        color: AppColors.textSecondary),
+                  ),
+                if (!lockTypeAndSort)
+                  IconButton(
+                    onPressed: () {
+                      final scope =
+                          type == 'movie' || type == 'series' ? type : 'all';
+                      context.go('/search?scope=$scope');
+                    },
+                    icon: const Icon(Icons.search_rounded,
+                        color: AppColors.textSecondary),
+                  ),
               ],
             ),
           ),
           const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _PillTabs(
-                    values: const [
-                      ('All', 'all'),
-                      ('Movies', 'movie'),
-                      ('Series', 'series'),
-                    ],
-                    current: type,
-                    onSelect: (v) => _goWith(context, uri, type: v),
+          if (!lockTypeAndSort)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _PillTabs(
+                      values: const [
+                        ('All', 'all'),
+                        ('Movies', 'movie'),
+                        ('Series', 'series'),
+                      ],
+                      current: type,
+                      onSelect: (v) => _goWith(context, uri, type: v),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                _PillTabs(
-                  values: const [
-                    ('Popular', 'popular'),
-                    ('Top Rated', 'top_rated'),
-                  ],
-                  current: sort,
-                  onSelect: (v) => _goWith(context, uri, sort: v),
-                  compact: true,
-                ),
-              ],
+                  const SizedBox(width: 10),
+                  _PillTabs(
+                    values: const [
+                      ('Popular', 'popular'),
+                      ('Top Rated', 'top_rated'),
+                    ],
+                    current: effectiveSort,
+                    onSelect: (v) => _goWith(context, uri, sort: v),
+                    compact: true,
+                  ),
+                ],
+              ),
             ),
-          ),
           const SizedBox(height: 14),
           asyncGenres.when(
             data: (genres) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  child: Row(
-                    children: [
+              final row = SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  children: [
+                    _chip(
+                      context,
+                      label: 'All',
+                      active: selectedGenre.isEmpty,
+                      onTap: () => _goWith(context, uri, genre: ''),
+                    ),
+                    for (final g in genres) ...[
+                      const SizedBox(width: 10),
                       _chip(
                         context,
-                        label: 'All',
-                        active: selectedGenre.isEmpty,
-                        onTap: () => _goWith(context, uri, genre: ''),
+                        label: g.name,
+                        active: selectedGenre == g.id,
+                        onTap: () => _goWith(context, uri, genre: g.id),
                       ),
-                      for (final g in genres) ...[
-                        const SizedBox(width: 10),
-                        _chip(
-                          context,
-                          label: g.name,
-                          active: selectedGenre == g.id,
-                          onTap: () => _goWith(context, uri, genre: g.id),
-                        ),
-                      ],
                     ],
-                  ),
+                  ],
                 ),
+              );
+
+              // For Movies/Series pages, make categories edge-to-edge.
+              if (lockTypeAndSort) return row;
+
+              // For the generic Browse page, keep aligned with the rest of UI.
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: row,
               );
             },
             loading: () => const SizedBox(height: 40),
@@ -179,7 +195,7 @@ class BrowseScreen extends ConsumerWidget {
               };
 
               final sorted = [...typed];
-              if (sort == 'top_rated') {
+              if (effectiveSort == 'top_rated') {
                 sorted.sort((a, b) {
                   final ar = a.rating ?? -1;
                   final br = b.rating ?? -1;
@@ -190,7 +206,7 @@ class BrowseScreen extends ConsumerWidget {
               return ContentGrid(
                 title: 'Browse',
                 subtitle:
-                    sort == 'top_rated' ? 'Top rated' : 'Popular right now',
+                    effectiveSort == 'top_rated' ? 'Top rated' : 'Popular right now',
                 contents: sorted,
                 onSelect: (m) => _open(context, ref, m),
               );
