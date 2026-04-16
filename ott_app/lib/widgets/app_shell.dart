@@ -21,8 +21,11 @@ class AppShell extends ConsumerWidget {
       builder: (context, constraints) {
         final isTablet = constraints.maxWidth >= AppBreakpoints.tabletMin;
         final isPlaying = ref.watch(playerProvider).isPlaying;
-        final location = GoRouterState.of(context).uri.toString();
-        final showTopNav = location != '/';
+        final uri = GoRouterState.of(context).uri;
+        final path = uri.path;
+        final isHome = path == '/';
+        final isImmersive = path.startsWith('/content/') || path.startsWith('/player/');
+        final showTopNav = !isHome && !isImmersive;
         return Scaffold(
           extendBody: !isTablet,
           body: NotificationListener<ScrollNotification>(

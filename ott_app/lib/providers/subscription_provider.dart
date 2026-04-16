@@ -2,19 +2,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SubscriptionState {
   const SubscriptionState({
-    required this.selectedTier, // 'super'|'premium'
-    required this.billingCycle, // 'monthly'|'quarterly'|'yearly'
+    required this.selectedPlanId, // 'free'|'standard'|'premium'
+    required this.billingCycle, // 'monthly'|'annual'
   });
 
-  final String selectedTier;
+  final String selectedPlanId;
   final String billingCycle;
 
   SubscriptionState copyWith({
-    String? selectedTier,
+    String? selectedPlanId,
     String? billingCycle,
   }) {
     return SubscriptionState(
-      selectedTier: selectedTier ?? this.selectedTier,
+      selectedPlanId: selectedPlanId ?? this.selectedPlanId,
       billingCycle: billingCycle ?? this.billingCycle,
     );
   }
@@ -23,10 +23,10 @@ class SubscriptionState {
 class SubscriptionNotifier extends StateNotifier<SubscriptionState> {
   SubscriptionNotifier()
       : super(const SubscriptionState(
-            selectedTier: 'premium', billingCycle: 'monthly'));
+            selectedPlanId: 'premium', billingCycle: 'monthly'));
 
-  void selectTier(String tier) {
-    state = state.copyWith(selectedTier: tier);
+  void selectPlan(String planId) {
+    state = state.copyWith(selectedPlanId: planId);
   }
 
   void selectBillingCycle(String billingCycle) {

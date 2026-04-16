@@ -106,6 +106,11 @@ class _TopNavBarState extends ConsumerState<TopNavBar> {
                               () => context.go('/subscription'),
                               icon: Icons.credit_card_rounded,
                             ),
+                            _menuItem(
+                              'Pricing',
+                              () => context.go('/pricing'),
+                              icon: Icons.local_offer_rounded,
+                            ),
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 6),
                               child: Divider(

@@ -18,6 +18,7 @@ class AppTheme {
         surface: AppColors.card,
       ),
       textTheme: textTheme,
+      iconTheme: const IconThemeData(color: AppColors.textSecondary),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
@@ -41,7 +42,7 @@ class AppTheme {
           fontWeight: weight,
           color: AppColors.textPrimary,
           height: 1.08,
-          letterSpacing: -0.2,
+          letterSpacing: -0.4,
         );
 
     TextStyle inter(double size, FontWeight weight) => GoogleFonts.inter(
@@ -54,7 +55,7 @@ class AppTheme {
     return TextTheme(
       displayLarge: soraTight(56, FontWeight.w800),
       displayMedium: soraTight(40, FontWeight.w800),
-      displaySmall: soraTight(32, FontWeight.w700),
+      displaySmall: soraTight(32, FontWeight.w800),
       headlineLarge: soraTight(24, FontWeight.w800),
       headlineMedium: soraTight(20, FontWeight.w800),
       titleLarge: soraTight(18, FontWeight.w700),

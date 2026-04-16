@@ -7,7 +7,7 @@ import '../theme/app_colors.dart';
 import '../utils/extensions.dart';
 import 'app_image.dart';
 
-enum ContentCardVariant { defaultPoster, continueWatching, top10 }
+enum ContentCardVariant { defaultPoster, continueWatching, top10, largePoster }
 
 class ContentCard extends StatefulWidget {
   const ContentCard({
@@ -41,7 +41,9 @@ class _ContentCardState extends State<ContentCard>
       case ContentCardVariant.continueWatching:
         return (280, 158);
       case ContentCardVariant.top10:
-        return (160, 210);
+        return (240, 330);
+      case ContentCardVariant.largePoster:
+        return (220, 320);
     }
   }
 
@@ -67,7 +69,12 @@ class _ContentCardState extends State<ContentCard>
   @override
   Widget build(BuildContext context) {
     final (w, h) = _sizeForVariant();
-    final borderRadius = BorderRadius.circular(12);
+    final isTop10 =
+        widget.variant == ContentCardVariant.top10 && widget.rank != null;
+    final posterRadiusValue = isTop10
+        ? 22.0
+        : (widget.variant == ContentCardVariant.largePoster ? 28.0 : 12.0);
+    final borderRadius = BorderRadius.circular(posterRadiusValue);
     return RepaintBoundary(
       child: GestureDetector(
         onTapDown: (_) => setState(() => _pressed = true),
@@ -93,28 +100,74 @@ class _ContentCardState extends State<ContentCard>
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: borderRadius,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.38),
-                        blurRadius: 10,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: borderRadius,
-                    child: AppImage(
-                      source: widget.content.image,
-                      width: w,
-                      height: h,
-                      fit: BoxFit.cover,
-                      placeholderBorderRadius: 12,
+                if (isTop10) ...[
+                  Positioned(
+                    left: -25,
+                    bottom: -6,
+                    child: _RankNumber(
+                      rank: widget.rank!,
+                      fontSize: 158,
+                      strokeColor: AppColors.accent,
                     ),
                   ),
-                ),
+                  Positioned(
+                    left: 54,
+                    bottom: 0,
+                    child: SizedBox(
+                      width: 170,
+                      height: h - 12,
+                      child: _posterWithInfo(
+                        width: 170,
+                        height: h - 12,
+                        radius: borderRadius,
+                        showTypeBadge: true,
+                      ),
+                    ),
+                  ),
+                  if (widget.content.rating != null)
+                    Positioned(
+                      left: 54 + 12,
+                      top: 40,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppColors.background.withOpacity(0.95),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(color: AppColors.accent),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.38),
+                              blurRadius: 24,
+                              offset: const Offset(0, 12),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.star_rounded,
+                                size: 14, color: AppColors.accent),
+                            const SizedBox(width: 4),
+                            Text(
+                              (widget.content.rating! * 10).toStringAsFixed(1),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ] else
+                  _posterWithInfo(
+                    width: w,
+                    height: h,
+                    radius: borderRadius,
+                    showTypeBadge: true,
+                  ),
                 if (widget.variant == ContentCardVariant.continueWatching &&
                     widget.content.progress != null)
                   Positioned(
@@ -133,13 +186,6 @@ class _ContentCardState extends State<ContentCard>
                         child: Container(color: AppColors.accent),
                       ),
                     ),
-                  ),
-                if (widget.variant == ContentCardVariant.top10 &&
-                    widget.rank != null)
-                  Positioned(
-                    left: -28,
-                    bottom: -20,
-                    child: _RankNumber(rank: widget.rank!),
                   ),
                 if (widget.variant == ContentCardVariant.defaultPoster &&
                     widget.content.genre.isNotEmpty)
@@ -292,11 +338,153 @@ class _ContentCardState extends State<ContentCard>
       ),
     );
   }
+
+  Widget _posterWithInfo({
+    required double width,
+    required double height,
+    required BorderRadius radius,
+    required bool showTypeBadge,
+  }) {
+    final isSeries = widget.content.type == 'series';
+    final rating = widget.content.rating;
+    final metaLeft = isSeries ? 'TV' : widget.content.year.toString();
+    final large = widget.variant == ContentCardVariant.largePoster;
+    final titleSize = large ? 13.5 : 12.0;
+    final metaSize = large ? 10.5 : 10.0;
+    final showBottomRating = widget.variant != ContentCardVariant.top10;
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.38),
+            blurRadius: 10,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: radius,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            AppImage(
+              source: widget.content.image,
+              width: width,
+              height: height,
+              fit: BoxFit.cover,
+              placeholderBorderRadius: radius.topLeft.x,
+            ),
+            // Gradient overlay like web ContentCard.
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.95),
+                    Colors.black.withOpacity(0.20),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+            if (showTypeBadge)
+              Positioned(
+                top: 10,
+                left: 10,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.50),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: Text(
+                    isSeries ? 'SERIES' : 'HD',
+                    style: const TextStyle(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.2,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            Positioned(
+              left: 10,
+              right: 10,
+              bottom: 10,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.content.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: titleSize,
+                      height: 1.05,
+                      letterSpacing: -0.1,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Text(
+                        metaLeft,
+                        style: TextStyle(
+                          fontSize: metaSize,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white.withOpacity(0.40),
+                          letterSpacing: 1.4,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (showBottomRating && rating != null)
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star_rounded,
+                              size: 14,
+                              color: AppColors.accent,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              (rating * 10).toStringAsFixed(1),
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white.withOpacity(0.60),
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _RankNumber extends StatelessWidget {
-  const _RankNumber({required this.rank});
+  const _RankNumber({
+    required this.rank,
+    required this.fontSize,
+    required this.strokeColor,
+  });
   final int rank;
+  final double fontSize;
+  final Color strokeColor;
 
   @override
   Widget build(BuildContext context) {
@@ -306,19 +494,21 @@ class _RankNumber extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-            fontSize: 110,
+            fontSize: fontSize,
             fontWeight: FontWeight.w900,
+            fontStyle: FontStyle.italic,
             foreground: Paint()
               ..style = PaintingStyle.stroke
-              ..color = Colors.white
-              ..strokeWidth = 3,
+              ..color = strokeColor
+              ..strokeWidth = 2.0,
           ),
         ),
         Text(
           text,
-          style: const TextStyle(
-            fontSize: 110,
+          style: TextStyle(
+            fontSize: fontSize,
             fontWeight: FontWeight.w900,
+            fontStyle: FontStyle.italic,
             color: Colors.transparent,
           ),
         ),
