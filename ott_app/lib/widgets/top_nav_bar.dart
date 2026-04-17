@@ -202,15 +202,10 @@ class _TopNavBarState extends ConsumerState<TopNavBar> {
       duration: 250.ms,
       height: topInset + 70,
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: !scrolled
-          ? const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.black54, Colors.transparent],
-              ),
-            )
-          : null,
+      // Keep the bar fully transparent until the page scrolls; the page body is
+      // already padded under the nav, so an overlay gradient can look like a
+      // "gray patch" on flat/solid backgrounds (e.g. Pricing).
+      decoration: null,
       child: Padding(
         padding: EdgeInsets.only(top: topInset),
         child: Align(

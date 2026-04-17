@@ -243,48 +243,46 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       Widget? trailing,
     }) {
       final active = state.billingCycle == value;
-      return Expanded(
-        child: InkWell(
-          onTap: () => notifier.selectBillingCycle(value),
-          borderRadius: BorderRadius.circular(999),
-          child: AnimatedContainer(
-            duration: 220.ms,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(999),
-              gradient: active
-                  ? const LinearGradient(
-                      colors: [AppColors.accent, AppColors.accentHover],
+      return InkWell(
+        onTap: () => notifier.selectBillingCycle(value),
+        borderRadius: BorderRadius.circular(999),
+        child: AnimatedContainer(
+          duration: 220.ms,
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(999),
+            gradient: active
+                ? const LinearGradient(
+                    colors: [AppColors.accent, AppColors.accentHover],
+                  )
+                : null,
+            color: active ? null : Colors.transparent,
+            boxShadow: active
+                ? [
+                    BoxShadow(
+                      color: AppColors.accent.withOpacity(0.28),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
                     )
-                  : null,
-              color: active ? null : Colors.transparent,
-              boxShadow: active
-                  ? [
-                      BoxShadow(
-                        color: AppColors.accent.withOpacity(0.28),
-                        blurRadius: 18,
-                        offset: const Offset(0, 8),
-                      )
-                    ]
-                  : null,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: active ? Colors.white : AppColors.textSecondary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
-                if (trailing != null) ...[
-                  const SizedBox(width: 8),
-                  trailing,
-                ],
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: active ? Colors.white : AppColors.textSecondary,
+                      fontWeight: FontWeight.w800,
+                    ),
+              ),
+              if (trailing != null) ...[
+                const SizedBox(width: 8),
+                trailing,
               ],
-            ),
+            ],
           ),
         ),
       );
@@ -599,4 +597,3 @@ class _FaqItem {
   final String q;
   final String a;
 }
-

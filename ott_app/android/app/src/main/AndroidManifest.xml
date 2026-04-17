@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for all runtime HTTP/HTTPS calls in release builds. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Optional, but enables better connectivity/error handling. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
         android:label="Camcine"
         android:name="${applicationName}"
