@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Camcine uses the microphone to let you search by voice.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Camcine uses speech recognition to convert your voice into a search query.</string>
 </dict>
 </plist>

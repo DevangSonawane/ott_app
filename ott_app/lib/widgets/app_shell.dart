@@ -26,9 +26,10 @@ class AppShell extends ConsumerWidget {
         final isHome = path == '/';
         final isImmersive =
             path.startsWith('/content/') || path.startsWith('/player/');
-        final showTopNav =
-            !isHome &&
+        final isSearch = path == '/search';
+        final showTopNav = !isHome &&
             !isImmersive &&
+            !isSearch &&
             !path.startsWith('/songs') &&
             !path.startsWith('/live-news');
         return Scaffold(

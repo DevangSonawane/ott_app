@@ -68,9 +68,7 @@ final hollywoodProvider = FutureProvider<List<Movie>>((ref) async {
 
 final trendingTvProvider = FutureProvider<List<Movie>>((ref) async {
   final trending = await ref.watch(appContentRepositoryProvider).trendingNow();
-  return trending
-      .where((m) => m.type == 'series')
-      .toList(growable: false);
+  return trending.where((m) => m.type == 'series').toList(growable: false);
 });
 
 final top10Provider = FutureProvider<List<Movie>>((ref) async {
@@ -97,7 +95,7 @@ final searchResultsProvider = FutureProvider<List<Movie>>((ref) async {
   final query = ref.watch(searchQueryProvider);
 
   if (query.trim().isEmpty) {
-    return (await ref.watch(appContentRepositoryProvider).trendingNow());
+    return (await ref.watch(appContentRepositoryProvider).allContent());
   }
 
   final q = query.trim().toLowerCase();
